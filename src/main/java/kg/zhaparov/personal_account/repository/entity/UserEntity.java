@@ -1,10 +1,14 @@
 package kg.zhaparov.personal_account.repository.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
+import java.io.Serializable;
 
 
-@Table(name = "users", schema = "user")
+@Table(name = "users", schema = "public")
 @Entity
+@Data
 public class UserEntity {
     @Id
     @Column(name = "id")
