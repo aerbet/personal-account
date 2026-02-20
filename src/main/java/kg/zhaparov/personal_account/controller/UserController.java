@@ -3,7 +3,6 @@ package kg.zhaparov.personal_account.controller;
 import jakarta.validation.Valid;
 import kg.zhaparov.personal_account.domain.model.User;
 import kg.zhaparov.personal_account.payload.request.OtpRequest;
-import kg.zhaparov.personal_account.repository.entity.UserEntity;
 import kg.zhaparov.personal_account.service.OtpService;
 import kg.zhaparov.personal_account.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -33,6 +31,19 @@ public class UserController {
         List<User> users = service.findAll();
 
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/otp")
+    public ResponseEntity<String> getUserOtp(@RequestBody @Valid OtpRequest request) {
+        try {
+            String otp = otpService.getOtp(request.getPhoneNumber());
+            if (otp == null) {
+                throw new IllegalArgumentException("User don't have otp");
+            }
+            return ResponseEntity.ok(otp);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/otp/generate")

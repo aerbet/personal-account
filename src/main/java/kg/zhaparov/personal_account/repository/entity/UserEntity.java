@@ -3,10 +3,8 @@ package kg.zhaparov.personal_account.repository.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.io.Serializable;
 
-
-@Table(name = "users", schema = "public")
+@Table(name = "users_rd", schema = "public")
 @Entity
 @Data
 public class UserEntity {

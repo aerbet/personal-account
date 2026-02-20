@@ -34,4 +34,9 @@ public class OtpService {
         String savedOtp = redisTemplate.opsForValue().get(key);
         return otp.equals(savedOtp);
     }
+
+    public String getOtp(String phoneNumber) {
+        String key = "otp:" + phoneNumber;
+        return redisTemplate.opsForValue().get(key);
+    }
 }
