@@ -1,17 +1,25 @@
 package kg.zhaparov.personal_account.repository.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 
 @Table(name = "users_rd", schema = "public")
 @Entity
+@Builder
 @Data
 public class UserEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_first_name", nullable = false)
+    String firstName;
+
+    @Column(name = "user_last_name", nullable = false)
+    String lastName;
 
     @Column(unique = true, name = "user_phone_number", nullable = false)
     private String phoneNumber;
@@ -22,14 +30,28 @@ public class UserEntity {
     @Column(name = "user_password", nullable = false)
     private String password;
 
+    @Column(name = "is_verified")
+    boolean isVerified;
+
     public UserEntity() {
     }
 
-    public UserEntity(Long id, String phoneNumber, String email, String password) {
+    public UserEntity(
+            Long id,
+            String phoneNumber,
+            String firstName,
+            String lastName,
+            String email,
+            String password,
+            boolean isVerified
+    ) {
         this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
+        this.isVerified = isVerified;
     }
 
     public Long getId() {
@@ -38,6 +60,22 @@ public class UserEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPhoneNumber() {
@@ -62,5 +100,13 @@ public class UserEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 }
