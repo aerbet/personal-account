@@ -1,18 +1,16 @@
 package kg.zhaparov.personal_account.payload.request;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
 @Builder
-public class RegisterRequest {
+public class UserRequest {
     private String firstName;
     private String lastName;
     private String phoneNumber;
     private String email;
     private String password;
 
-    public RegisterRequest(String userName, String firstName, String phoneNumber, String lastName, String email, String password) {
+    public UserRequest(String firstName, String lastName, String phoneNumber, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
