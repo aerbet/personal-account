@@ -16,13 +16,13 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository repository;
-    private final EmailService emailService;
+    private final NotificationService notificationService;
     private final OtpService otpService;
     private final UserMapper mapper;
 
-    public UserService(UserRepository repository, EmailService emailService, OtpService otpService, UserMapper mapper) {
+    public UserService(UserRepository repository, NotificationService notificationService, OtpService otpService, UserMapper mapper) {
         this.repository = repository;
-        this.emailService = emailService;
+        this.notificationService = notificationService;
         this.otpService = otpService;
         this.mapper = mapper;
     }
@@ -36,6 +36,11 @@ public class UserService {
                 .toList();
     }
 
+    public User findByPhoneNumber(String phoneNumber) {
+        UserEntity userOpt = repository.findByPhoneNumber(phoneNumber);
+        return mapper.toDomain(userOpt);
+    }
+
     public User createUser(User userToCreate) {
         var entityToSave = mapper.toEntity(userToCreate);
 
@@ -44,15 +49,13 @@ public class UserService {
     }
 
     public RegisterResponse register(RegisterRequest request) {
-        UserEntity existingUser = repository.findByPhoneNumber(request.getEmail());
+        UserEntity existingUser = repository.findByPhoneNumber(request.getPhoneNumber());
 
         if (existingUser != null && existingUser.isVerified()) {
             throw new RuntimeException("User already exists");
         }
 
         UserEntity user = UserEntity.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
                 .password(request.getPassword())
@@ -61,17 +64,12 @@ public class UserService {
         String otp = otpService.generateOtp(request.getPhoneNumber());
         log.info("client: {}, otp: {}", request.getPhoneNumber(), otp);
         UserEntity savedUser = repository.save(user);
-        sendVerificationEmail(savedUser.getEmail(), otp);
+        notificationService.sendVerificationEmail(savedUser.getEmail(), otp);
 
-        RegisterResponse response = RegisterResponse.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
+        return RegisterResponse.builder()
                 .phoneNumber(user.getPhoneNumber())
                 .email(user.getEmail())
-                .otp(otp)
                 .build();
-
-        return response;
     }
 
     public void verify(String phoneNumber, String otp) {
@@ -89,18 +87,12 @@ public class UserService {
         }
     }
 
-    public UserEntity login(String email, String password) {
-        UserEntity user = repository.findByPhoneNumber(email);
+    public User login(String phoneNumber, String password) {
+        UserEntity user = repository.findByPhoneNumber(phoneNumber);
         if (user != null && user.isVerified() && user.getPassword().equals(password)) {
-            return user;
+            return mapper.toDomain(user);
         } else {
             throw new RuntimeException("User not found");
         }
-    }
-
-    private void sendVerificationEmail(String email, String otp) {
-        String subject = "Email verification";
-        String body = "your verification code: " + otp;
-        emailService.sendEmail(email, subject, body);
     }
 }

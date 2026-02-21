@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import kg.zhaparov.personal_account.domain.model.User;
 import kg.zhaparov.personal_account.payload.request.LoginRequest;
 import kg.zhaparov.personal_account.payload.request.OtpRequest;
+import kg.zhaparov.personal_account.payload.request.VerificationRequest;
 import kg.zhaparov.personal_account.payload.request.RegisterRequest;
 import kg.zhaparov.personal_account.payload.response.RegisterResponse;
 import kg.zhaparov.personal_account.service.UserService;
@@ -41,19 +42,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/otp")
-    public ResponseEntity<String> getUserOtp(@RequestBody @Valid RegisterRequest request) {
-        try {
-            String otp = service.getUserOtp(request.getPhoneNumber());
-            if (otp == null) {
-                throw new IllegalArgumentException("User don't have otp");
-            }
-            return ResponseEntity.ok(otp);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody @Valid User user) {
         try {
@@ -77,10 +65,10 @@ public class UserController {
 
     @PostMapping("/verify")
     public ResponseEntity<?> verify(
-            @RequestBody OtpRequest otpRequest
+            @RequestBody VerificationRequest request
     ) {
         try {
-            service.verify(otpRequest.getPhoneNumber(), otpRequest.getOtp());
+            service.verify(request.getPhoneNumber(), request.getOtp());
             return new ResponseEntity<>("User verified successfully", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -94,5 +82,4 @@ public class UserController {
         User user = service.login(request.getPhoneNumber(), request.getPassword());
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
 }
