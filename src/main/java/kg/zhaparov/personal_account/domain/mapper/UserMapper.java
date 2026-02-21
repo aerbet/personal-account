@@ -14,7 +14,8 @@ public class UserMapper {
                 user.getId(),
                 user.getPhoneNumber(),
                 user.getEmail(),
-                user.getPassword()
+                user.getPassword(),
+                user.isVerified()
         );
     }
 
@@ -25,7 +26,8 @@ public class UserMapper {
                 user.id(),
                 user.phoneNumber(),
                 user.email(),
-                user.password()
+                user.password(),
+                user.verified()
         );
     }
 }

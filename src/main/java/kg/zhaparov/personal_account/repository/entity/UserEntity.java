@@ -15,12 +15,6 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_first_name", nullable = false)
-    String firstName;
-
-    @Column(name = "user_last_name", nullable = false)
-    String lastName;
-
     @Column(unique = true, name = "user_phone_number", nullable = false)
     private String phoneNumber;
 
@@ -39,15 +33,11 @@ public class UserEntity {
     public UserEntity(
             Long id,
             String phoneNumber,
-            String firstName,
-            String lastName,
             String email,
             String password,
             boolean isVerified
     ) {
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
@@ -60,22 +50,6 @@ public class UserEntity {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getPhoneNumber() {
