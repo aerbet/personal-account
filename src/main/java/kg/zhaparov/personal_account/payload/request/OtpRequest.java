@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VerificationRequest {
+public class OtpRequest {
 
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
-    @NotBlank(message = "Otp is required")
-    private String otp;
 }
