@@ -3,7 +3,6 @@ package kg.zhaparov.personal_account.controller;
 import jakarta.validation.Valid;
 import kg.zhaparov.personal_account.domain.model.User;
 import kg.zhaparov.personal_account.payload.request.LoginRequest;
-import kg.zhaparov.personal_account.payload.request.OtpRequest;
 import kg.zhaparov.personal_account.payload.request.VerificationRequest;
 import kg.zhaparov.personal_account.payload.request.RegisterRequest;
 import kg.zhaparov.personal_account.payload.response.RegisterResponse;
@@ -19,11 +18,11 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
-public class UserController {
+public class AuthController {
 
     private final UserService service;
 
-    public UserController(UserService service) {
+    public AuthController(UserService service) {
         this.service = service;
     }
 
@@ -76,7 +75,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
+    public ResponseEntity<User> login(
             @RequestBody LoginRequest request
             ) {
         User user = service.login(request.getPhoneNumber(), request.getPassword());
