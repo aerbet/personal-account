@@ -17,15 +17,14 @@ public class OtpService {
         this.repository = repository;
     }
 
-
     public String generateOtp(String phoneNumber) {
-        if (!repository.existsByPhoneNumber(phoneNumber)) {
-            throw new IllegalArgumentException("Client not found with phone number: " + phoneNumber);
-        }
+//        if (!repository.existsByPhoneNumber(phoneNumber)) {
+//            throw new IllegalArgumentException("Client not found with phone number: " + phoneNumber);
+//        }
 
         String otp = String.format("%06d", new Random().nextInt(999999));
         String key = "otp:" + phoneNumber;
-        redisTemplate.opsForValue().set(key, otp, 2, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(key, otp, 60, TimeUnit.MINUTES);
         return otp;
     }
 
