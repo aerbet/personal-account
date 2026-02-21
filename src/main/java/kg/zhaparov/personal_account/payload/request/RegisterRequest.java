@@ -3,35 +3,15 @@ package kg.zhaparov.personal_account.payload.request;
 import lombok.Builder;
 
 @Builder
-public class UserRequest {
-    private String firstName;
-    private String lastName;
+public class RegisterRequest {
     private String phoneNumber;
     private String email;
     private String password;
 
-    public UserRequest(String firstName, String lastName, String phoneNumber, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public RegisterRequest(String phoneNumber, String email, String password) {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getPhoneNumber() {
