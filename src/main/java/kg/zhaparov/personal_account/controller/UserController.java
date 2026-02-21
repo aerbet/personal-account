@@ -2,8 +2,10 @@ package kg.zhaparov.personal_account.controller;
 
 import jakarta.validation.Valid;
 import kg.zhaparov.personal_account.domain.model.User;
+import kg.zhaparov.personal_account.payload.request.LoginRequest;
 import kg.zhaparov.personal_account.payload.request.OtpRequest;
-import kg.zhaparov.personal_account.service.OtpService;
+import kg.zhaparov.personal_account.payload.request.RegisterRequest;
+import kg.zhaparov.personal_account.payload.response.RegisterResponse;
 import kg.zhaparov.personal_account.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -15,14 +17,12 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class UserController {
 
-    private final OtpService otpService;
     private final UserService service;
 
-    public UserController(OtpService otpService, UserService service) {
-        this.otpService = otpService;
+    public UserController(UserService service) {
         this.service = service;
     }
 
@@ -33,24 +33,21 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/phone")
+    public ResponseEntity<User> getUserByPhoneNumber(
+            @RequestParam String phoneNumber
+    ) {
+        User user = service.findByPhoneNumber(phoneNumber);
+        return ResponseEntity.ok(user);
+    }
+
     @GetMapping("/otp")
-    public ResponseEntity<String> getUserOtp(@RequestBody @Valid OtpRequest request) {
+    public ResponseEntity<String> getUserOtp(@RequestBody @Valid RegisterRequest request) {
         try {
-            String otp = otpService.getOtp(request.getPhoneNumber());
+            String otp = service.getUserOtp(request.getPhoneNumber());
             if (otp == null) {
                 throw new IllegalArgumentException("User don't have otp");
             }
-            return ResponseEntity.ok(otp);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/otp/generate")
-    public ResponseEntity<String> generateOtp(@RequestBody @Valid OtpRequest request) {
-        try {
-            String otp = otpService.generateOtp(request.getPhoneNumber());
-            log.info("client: {}, otp: {}", request.getPhoneNumber(), otp);
             return ResponseEntity.ok(otp);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -68,6 +65,34 @@ public class UserController {
             log.error("Error creating user: ", e);
             return new ResponseEntity<>((HttpHeaders) null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<RegisterResponse> register(
+            @RequestBody RegisterRequest request
+    ) {
+        RegisterResponse response = service.register(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<?> verify(
+            @RequestBody OtpRequest otpRequest
+    ) {
+        try {
+            service.verify(otpRequest.getPhoneNumber(), otpRequest.getOtp());
+            return new ResponseEntity<>("User verified successfully", HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(
+            @RequestBody LoginRequest request
+            ) {
+        User user = service.login(request.getPhoneNumber(), request.getPassword());
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 }

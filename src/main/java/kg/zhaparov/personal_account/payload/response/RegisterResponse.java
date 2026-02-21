@@ -3,7 +3,7 @@ package kg.zhaparov.personal_account.payload.response;
 import lombok.Builder;
 
 @Builder
-public class UserResponse {
+public class RegisterResponse {
     private String phoneNumber;
     private String email;
 
