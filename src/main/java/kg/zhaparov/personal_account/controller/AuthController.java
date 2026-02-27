@@ -3,6 +3,7 @@ package kg.zhaparov.personal_account.controller;
 import jakarta.validation.Valid;
 import kg.zhaparov.personal_account.domain.model.User;
 import kg.zhaparov.personal_account.payload.request.LoginRequest;
+import kg.zhaparov.personal_account.payload.request.OtpRequest;
 import kg.zhaparov.personal_account.payload.request.VerificationRequest;
 import kg.zhaparov.personal_account.payload.request.RegisterRequest;
 import kg.zhaparov.personal_account.payload.response.RegisterResponse;
@@ -33,12 +34,11 @@ public class AuthController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/phone")
-    public ResponseEntity<User> getUserByPhoneNumber(
-            @RequestParam String phoneNumber
+    @PostMapping("/phone")
+    public boolean isUserExistByPhoneNumber(
+            @RequestBody OtpRequest otpRequest
     ) {
-        User user = service.findByPhoneNumber(phoneNumber);
-        return ResponseEntity.ok(user);
+        return service.existsByPhoneNumber(otpRequest.getPhoneNumber());
     }
 
     @PostMapping

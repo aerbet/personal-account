@@ -36,9 +36,8 @@ public class UserService {
                 .toList();
     }
 
-    public User findByPhoneNumber(String phoneNumber) {
-        UserEntity userOpt = repository.findByPhoneNumber(phoneNumber);
-        return mapper.toDomain(userOpt);
+    public boolean existsByPhoneNumber(String phoneNumber) {
+        return repository.existsByPhoneNumber(phoneNumber);
     }
 
     public User createUser(User userToCreate) {
@@ -77,8 +76,6 @@ public class UserService {
 
         if (user == null) {
             throw new RuntimeException("User not found");
-        } else if (user.isVerified()) {
-            throw new RuntimeException("User is already verified");
         } else if (otp.equals(otpService.getOtp(phoneNumber))) {
             user.setVerified(true);
             repository.save(user);
